@@ -25,6 +25,10 @@ module.exports = {
       url: {
         type: Sequelize.STRING
       },
+      percentage: {
+        type: Sequelize.DOUBLE,
+        defaultValue: 0.0
+      },
       shippingCosts: {
         allowNull: false,
         defaultValue: 0.0,
