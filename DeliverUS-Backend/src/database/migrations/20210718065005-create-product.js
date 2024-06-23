@@ -14,7 +14,7 @@ module.exports = {
       description: {
         type: Sequelize.TEXT
       },
-      price: {
+      basePrice: {
         allowNull: false,
         type: Sequelize.DOUBLE
       },
