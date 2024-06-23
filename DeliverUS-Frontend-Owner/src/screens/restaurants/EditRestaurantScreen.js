@@ -7,6 +7,7 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import { update, getRestaurantCategories, getDetail } from '../../api/RestaurantEndpoints'
 import InputItem from '../../components/InputItem'
 import TextRegular from '../../components/TextRegular'
+import TextSemiBold from '../../components/TextSemibold'
 import * as GlobalStyles from '../../styles/GlobalStyles'
 import restaurantLogo from '../../../assets/restaurantLogo.jpeg'
 import restaurantBackground from '../../../assets/restaurantBackground.jpeg'
@@ -22,7 +23,7 @@ export default function EditRestaurantScreen ({ navigation, route }) {
   const [backendErrors, setBackendErrors] = useState()
   const [restaurant, setRestaurant] = useState({})
 
-  const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
+  const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, percentage: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
   const validationSchema = yup.object().shape({
     name: yup
       .string()
@@ -44,6 +45,10 @@ export default function EditRestaurantScreen ({ navigation, route }) {
       .number()
       .positive('Please provide a valid shipping cost value')
       .required('Shipping costs value is required'),
+    percentage: yup
+      .number()
+      .min(-5)
+      .max(5),
     email: yup
       .string()
       .nullable()
@@ -178,6 +183,38 @@ export default function EditRestaurantScreen ({ navigation, route }) {
                 name='shippingCosts'
                 label='Shipping costs:'
               />
+
+              <View style={styles.percentageContainer}>
+                <Pressable
+                onPress={ () => {
+                  if(values.percentage < 4.5) {
+                    setFieldValue('percentage', values.percentage + 0.5)
+                  }}
+                }>
+                <MaterialCommunityIcons
+                  name={'arrow-up-circle'}
+                  color={GlobalStyles.brandSecondaryTap}
+                  size={40}
+                />
+              </Pressable>
+
+              <TextSemiBold>Porcentaje actual: <TextSemiBold textStyle={{color: GlobalStyles.brandPrimary}}>{ values.percentage }%</TextSemiBold></TextSemiBold>
+
+              <Pressable
+                onPress={ () => {
+                  if(values.percentage > - 4.5) {
+                    setFieldValue('percentage', values.percentage - 0.5)
+                  }}
+                }>
+                <MaterialCommunityIcons
+                  name={'arrow-down-circle'}
+                  color={GlobalStyles.brandSecondaryTap}
+                  size={40}
+                />
+              </Pressable>
+              </View>
+              
+              
               <InputItem
                 name='email'
                 label='Email:'
@@ -285,5 +322,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignSelf: 'center',
     marginTop: 5
+  },
+  percentageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20
   }
 })
