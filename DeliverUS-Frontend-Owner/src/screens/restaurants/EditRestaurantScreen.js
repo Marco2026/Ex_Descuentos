@@ -136,23 +136,23 @@ export default function EditRestaurantScreen ({ navigation, route }) {
 
   const updateRestaurant = async (values) => {
     setBackendErrors([])
-    try {
-      if(values.percentage != 0 && !percentageMessage) {
-        setPercentageMessage(true)
-      } else {
-        setPercentageMessage(false)
+    if(values.percentage != 0 && !percentageMessage) {
+      setPercentageMessage(true)
+    } else {
+      setPercentageMessage(false)
+      try {
+        const updatedRestaurant = await update(restaurant.id, values)
+        showMessage({
+          message: `Restaurant ${updatedRestaurant.name} succesfully updated`,
+          type: 'success',
+          style: GlobalStyles.flashStyle,
+          titleStyle: GlobalStyles.flashTextStyle
+        })
+        navigation.navigate('RestaurantsScreen', { dirty: true })
+      } catch (error) {
+        console.log(error)
+        setBackendErrors(error.errors)
       }
-      const updatedRestaurant = await update(restaurant.id, values)
-      showMessage({
-        message: `Restaurant ${updatedRestaurant.name} succesfully updated`,
-        type: 'success',
-        style: GlobalStyles.flashStyle,
-        titleStyle: GlobalStyles.flashTextStyle
-      })
-      navigation.navigate('RestaurantsScreen', { dirty: true })
-    } catch (error) {
-      console.log(error)
-      setBackendErrors(error.errors)
     }
   }
 
@@ -194,8 +194,9 @@ export default function EditRestaurantScreen ({ navigation, route }) {
               <View style={styles.percentageContainer}>
                 <Pressable
                 onPress={ () => {
-                  if(values.percentage < 4.5) {
-                    setFieldValue('percentage', values.percentage + 0.5)
+                  let newPercentage = values.percentage + 0.5
+                  if(newPercentage < 5) {
+                    setFieldValue('percentage', newPercentage)
                   }}
                 }>
                 <MaterialCommunityIcons
@@ -209,8 +210,9 @@ export default function EditRestaurantScreen ({ navigation, route }) {
 
               <Pressable
                 onPress={ () => {
-                  if(values.percentage > - 4.5) {
-                    setFieldValue('percentage', values.percentage - 0.5)
+                  let newPercentage = values.percentage - 0.5
+                  if(newPercentage > -5) {
+                    setFieldValue('percentage', newPercentage)
                   }}
                 }>
                 <MaterialCommunityIcons
