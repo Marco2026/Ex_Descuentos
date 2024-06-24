@@ -16,12 +16,14 @@ import { ErrorMessage, Formik } from 'formik'
 import TextError from '../../components/TextError'
 import { prepareEntityImages } from '../../api/helpers/FileUploadHelper'
 import { buildInitialValues } from '../Helper'
+import ConfirmationModal from '../../components/ConfirmationModal'
 
 export default function EditRestaurantScreen ({ navigation, route }) {
   const [open, setOpen] = useState(false)
   const [restaurantCategories, setRestaurantCategories] = useState([])
   const [backendErrors, setBackendErrors] = useState()
   const [restaurant, setRestaurant] = useState({})
+  const [percentageMessage, setPercentageMessage] = useState(false)
 
   const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, percentage: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
   const validationSchema = yup.object().shape({
@@ -135,6 +137,11 @@ export default function EditRestaurantScreen ({ navigation, route }) {
   const updateRestaurant = async (values) => {
     setBackendErrors([])
     try {
+      if(values.percentage != 0 && !percentageMessage) {
+        setPercentageMessage(true)
+      } else {
+        setPercentageMessage(false)
+      }
       const updatedRestaurant = await update(restaurant.id, values)
       showMessage({
         message: `Restaurant ${updatedRestaurant.name} succesfully updated`,
@@ -289,6 +296,11 @@ export default function EditRestaurantScreen ({ navigation, route }) {
               </Pressable>
             </View>
           </View>
+          <ConfirmationModal
+            isVisible={percentageMessage}
+            onCancel={() => setPercentageMessage(false)}
+            onConfirm={() => updateRestaurant(values)}>
+          </ConfirmationModal>
         </ScrollView>
       )}
     </Formik>
